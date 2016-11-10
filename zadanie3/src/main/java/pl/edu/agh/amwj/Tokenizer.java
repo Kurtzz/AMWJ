@@ -38,8 +38,6 @@ public class Tokenizer {
                         state = TokenizeState.NUMBER;
                     } else if (c == '"') {
                         state = TokenizeState.STRING;
-                    } else if (c == '\'') {
-                        state = TokenizeState.COMMENT;
                     }
                     break;
 
@@ -79,12 +77,6 @@ public class Tokenizer {
                         state = TokenizeState.DEFAULT;
                     } else {
                         token += c;
-                    }
-                    break;
-
-                case COMMENT:
-                    if (c == '\n') {
-                        state = TokenizeState.DEFAULT;
                     }
                     break;
             }
