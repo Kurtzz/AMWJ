@@ -6,10 +6,9 @@ import pl.edu.agh.amwj.value.types.StringValue;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
- * Created by Comarch on 2016-11-10.
+ * Created by Kurtzz on 2016-11-10.
  */
 public class Parser {
     private final List<Token> tokens;
@@ -29,17 +28,14 @@ public class Parser {
      *               parser will fill this in as it scans the code.
      * @return The list of parsed statements.
      */
-    public List<Statement> parse(Map<String, Integer> labels) {
+    public List<Statement> parse() {
         List<Statement> statements = new ArrayList<Statement>();
 
         while (true) {
             // Ignore empty lines.
             while (match(TokenType.LINE));
 
-            if (match(TokenType.LABEL)) {
-                // Mark the index of the statement after the label.
-                labels.put(last(1).text, statements.size());
-            } else if (match(TokenType.WORD, TokenType.EQUALS)) {
+            if (match(TokenType.WORD, TokenType.EQUALS)) {
                 String name = last(2).text;
                 Expression value = expression();
                 statements.add(new AssignStatement(name, value));

@@ -1,7 +1,7 @@
 package pl.edu.agh.amwj.value.types;
 
 /**
- * Created by Comarch on 2016-11-10.
+ * Created by Kurtzz on 2016-11-10.
  */
 public class StringValue implements Value {
     private final String value;

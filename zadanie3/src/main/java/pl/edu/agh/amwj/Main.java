@@ -5,7 +5,7 @@ import pl.edu.agh.amwj.interpreter.Interpreter;
 import static pl.edu.agh.amwj.utils.FileReader.readFile;
 
 /**
- * Created by Comarch on 2016-11-10.
+ * Created by Kurtzz on 2016-11-10.
  */
 public class Main {
     public static void main(String[] args) {

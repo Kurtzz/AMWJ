@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Comarch on 2016-11-10.
+ * Created by Kurtzz on 2016-11-10.
  */
 public class Tokenizer {
     public static List<Token> tokenize(String source) {
@@ -44,10 +44,6 @@ public class Tokenizer {
                 case WORD:
                     if (Character.isLetterOrDigit(c)) {
                         token += c;
-                    } else if (c == ':') {
-                        tokens.add(new Token(token, TokenType.LABEL));
-                        token = "";
-                        state = TokenizeState.DEFAULT;
                     } else {
                         tokens.add(new Token(token, TokenType.WORD));
                         token = "";

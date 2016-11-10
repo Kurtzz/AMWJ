@@ -4,7 +4,7 @@ import java.io.*;
 import java.nio.charset.Charset;
 
 /**
- * Created by Comarch on 2016-11-10.
+ * Created by Kurtzz on 2016-11-10.
  */
 public class FileReader {
     public static String readFile(String path) {

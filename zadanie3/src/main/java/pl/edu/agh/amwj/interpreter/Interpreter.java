@@ -8,10 +8,9 @@ import pl.edu.agh.amwj.ast.Statement;
 import java.util.List;
 
 import static pl.edu.agh.amwj.Data.currentStatement;
-import static pl.edu.agh.amwj.Data.labels;
 
 /**
- * Created by Comarch on 2016-11-10.
+ * Created by Kurtzz on 2016-11-10.
  */
 public class Interpreter {
     public static void interpret(String source) {
@@ -20,7 +19,7 @@ public class Interpreter {
 
         // Parse.
         Parser parser = new Parser(tokens);
-        List<Statement> statements = parser.parse(labels);
+        List<Statement> statements = parser.parse();
 
         // Interpret until we're done.
         currentStatement = 0;

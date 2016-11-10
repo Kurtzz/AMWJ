@@ -6,7 +6,7 @@ import pl.edu.agh.amwj.value.types.Value;
 import static pl.edu.agh.amwj.Data.variables;
 
 /**
- * Created by Comarch on 2016-11-10.
+ * Created by Kurtzz on 2016-11-10.
  */
 public class VariableExpression implements Expression {
     private final String name;

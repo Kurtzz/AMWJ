@@ -5,7 +5,7 @@ import pl.edu.agh.amwj.value.types.StringValue;
 import pl.edu.agh.amwj.value.types.Value;
 
 /**
- * Created by Comarch on 2016-11-10.
+ * Created by Kurtzz on 2016-11-10.
  */
 public class OperatorExpression implements Expression {
     private final Expression left;
