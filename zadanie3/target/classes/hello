@@ -1,5 +1,0 @@
-' It doesn't get much simpler than this!
-count = "Hello, world!"
-cad = 83
-print count
-print cad + 2
