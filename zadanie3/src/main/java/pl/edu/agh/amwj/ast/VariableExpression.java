@@ -1,6 +1,6 @@
 package pl.edu.agh.amwj.ast;
 
-import pl.edu.agh.amwj.value.types.NumberValue;
+import pl.edu.agh.amwj.value.types.IntegerValue;
 import pl.edu.agh.amwj.value.types.Value;
 
 import static pl.edu.agh.amwj.Data.variables;
@@ -19,6 +19,6 @@ public class VariableExpression implements Expression {
         if (variables.containsKey(name)) {
             return variables.get(name);
         }
-        return new NumberValue(0);
+        return new IntegerValue(0);
     }
 }

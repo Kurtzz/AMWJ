@@ -1,7 +1,7 @@
 package pl.edu.agh.amwj;
 
 import pl.edu.agh.amwj.ast.*;
-import pl.edu.agh.amwj.value.types.NumberValue;
+import pl.edu.agh.amwj.value.types.IntegerValue;
 import pl.edu.agh.amwj.value.types.StringValue;
 
 import java.util.ArrayList;
@@ -45,18 +45,9 @@ public class Parser {
                 statements.add(new AssignStatement(name, value));
             } else if (match("print")) {
                 statements.add(new PrintStatement(expression()));
-            } /*else if (match("input")) {
-                statements.add(new InputStatement(
-                        consume(TokenType.WORD).text));
-            } else if (match("goto")) {
-                statements.add(new GotoStatement(
-                        consume(TokenType.WORD).text));
-            } else if (match("if")) {
-                Expression condition = expression();
-                consume("then");
-                String label = consume(TokenType.WORD).text;
-                statements.add(new IfThenStatement(condition, label));
-            }*/ else break; // Unexpected token (likely EOF), so end.
+            } else {
+                break; // Unexpected token (likely EOF), so end.
+            }
         }
 
         return statements;
@@ -85,7 +76,7 @@ public class Parser {
             // A word is a reference to a variable.
             return new VariableExpression(last(1).text);
         } else if (match(TokenType.NUMBER)) {
-            return new NumberValue(Double.parseDouble(last(1).text));
+            return new IntegerValue(Double.parseDouble(last(1).text));
         } else if (match(TokenType.STRING)) {
             return new StringValue(last(1).text);
         } else if (match(TokenType.LEFT_PAREN)) {

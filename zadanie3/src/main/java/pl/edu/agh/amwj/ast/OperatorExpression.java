@@ -1,6 +1,6 @@
 package pl.edu.agh.amwj.ast;
 
-import pl.edu.agh.amwj.value.types.NumberValue;
+import pl.edu.agh.amwj.value.types.IntegerValue;
 import pl.edu.agh.amwj.value.types.StringValue;
 import pl.edu.agh.amwj.value.types.Value;
 
@@ -25,48 +25,48 @@ public class OperatorExpression implements Expression {
         switch (operator) {
             case '=':
                 // Coerce to the left argument's type, then compare.
-                if (leftVal instanceof NumberValue) {
-                    return new NumberValue((leftVal.toNumber() ==
+                if (leftVal instanceof IntegerValue) {
+                    return new IntegerValue((leftVal.toNumber() ==
                             rightVal.toNumber()) ? 1 : 0);
                 } else {
-                    return new NumberValue(leftVal.toString().equals(
+                    return new IntegerValue(leftVal.toString().equals(
                             rightVal.toString()) ? 1 : 0);
                 }
             case '+':
                 // Addition if the left argument is a number, otherwise do
                 // string concatenation.
-                if (leftVal instanceof NumberValue) {
-                    return new NumberValue(leftVal.toNumber() +
+                if (leftVal instanceof IntegerValue) {
+                    return new IntegerValue(leftVal.toNumber() +
                             rightVal.toNumber());
                 } else {
                     return new StringValue(leftVal.toString() +
                             rightVal.toString());
                 }
             case '-':
-                return new NumberValue(leftVal.toNumber() -
+                return new IntegerValue(leftVal.toNumber() -
                         rightVal.toNumber());
             case '*':
-                return new NumberValue(leftVal.toNumber() *
+                return new IntegerValue(leftVal.toNumber() *
                         rightVal.toNumber());
             case '/':
-                return new NumberValue(leftVal.toNumber() /
+                return new IntegerValue(leftVal.toNumber() /
                         rightVal.toNumber());
             case '<':
                 // Coerce to the left argument's type, then compare.
-                if (leftVal instanceof NumberValue) {
-                    return new NumberValue((leftVal.toNumber() <
+                if (leftVal instanceof IntegerValue) {
+                    return new IntegerValue((leftVal.toNumber() <
                             rightVal.toNumber()) ? 1 : 0);
                 } else {
-                    return new NumberValue((leftVal.toString().compareTo(
+                    return new IntegerValue((leftVal.toString().compareTo(
                             rightVal.toString()) < 0) ? 1 : 0);
                 }
             case '>':
                 // Coerce to the left argument's type, then compare.
-                if (leftVal instanceof NumberValue) {
-                    return new NumberValue((leftVal.toNumber() >
+                if (leftVal instanceof IntegerValue) {
+                    return new IntegerValue((leftVal.toNumber() >
                             rightVal.toNumber()) ? 1 : 0);
                 } else {
-                    return new NumberValue((leftVal.toString().compareTo(
+                    return new IntegerValue((leftVal.toString().compareTo(
                             rightVal.toString()) > 0) ? 1 : 0);
                 }
         }
