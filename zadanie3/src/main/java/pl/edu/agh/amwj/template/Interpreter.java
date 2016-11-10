@@ -21,11 +21,9 @@ public class Interpreter {
 
     /**
      * Initializes Njp interpreter with specified program and heap size.
-     * 
-     * @param programFile
-     *            path to program file
-     * @param heapSize
-     *            heap size
+     *
+     * @param programFile path to program file
+     * @param heapSize    heap size
      */
     public Interpreter(String programFile, int heapSize) {
         // get program code stream
@@ -34,9 +32,8 @@ public class Interpreter {
 
     /**
      * Opens program file and returns program code input stream.
-     * 
-     * @param programFile
-     *            path to program file
+     *
+     * @param programFile path to program file
      * @return input stream for program code
      */
     private InputStream getProgramStream(String programFile) {
@@ -51,7 +48,7 @@ public class Interpreter {
         return programStream;
     }
 
-	private static int getHeapSize() {
-		return 4; //dummy implementation
-	}
+    private static int getHeapSize() {
+        return 4; //dummy implementation
+    }
 }
