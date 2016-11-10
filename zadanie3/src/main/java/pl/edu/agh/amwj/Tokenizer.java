@@ -28,11 +28,13 @@ public class Tokenizer {
             switch (state) {
                 case DEFAULT:
                     if (charTokens.indexOf(c) != -1) {
-                        tokens.add(new Token(Character.toString(c),
-                                tokenTypes[charTokens.indexOf(c)]));
-                    } else if (Character.isLetter(c)) {
+                        tokens.add(new Token(Character.toString(c), tokenTypes[charTokens.indexOf(c)]));
+                    } else if (Character.isLetter(c) && Character.isLowerCase(c)) {
                         token += c;
                         state = TokenizeState.WORD;
+                    } else if (Character.isLetter(c) && Character.isUpperCase(c)) {
+                        token += c;
+                        state = TokenizeState.TYPE;
                     } else if (Character.isDigit(c)) {
                         token += c;
                         state = TokenizeState.NUMBER;
@@ -69,6 +71,20 @@ public class Tokenizer {
                 case STRING:
                     if (c == '"') {
                         tokens.add(new Token(token, TokenType.STRING));
+                        token = "";
+                        state = TokenizeState.DEFAULT;
+                    } else {
+                        token += c;
+                    }
+                    break;
+
+                case TYPE:
+                    if (c == 'S') {
+                        tokens.add(new Token(token, TokenType.S_TYPE));
+                        token = "";
+                        state = TokenizeState.DEFAULT;
+                    } else if (c == 'V') {
+                        tokens.add(new Token(token, TokenType.V_TYPE));
                         token = "";
                         state = TokenizeState.DEFAULT;
                     } else {

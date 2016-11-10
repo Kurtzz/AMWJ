@@ -24,8 +24,6 @@ public class Parser {
      * tokens and routing to the other parse functions for the different
      * grammar syntax until we run out of code to parse.
      *
-     * @param labels A map of label names to statement indexes. The
-     *               parser will fill this in as it scans the code.
      * @return The list of parsed statements.
      */
     public List<Statement> parse() {
@@ -39,6 +37,10 @@ public class Parser {
                 String name = last(2).text;
                 Expression value = expression();
                 statements.add(new AssignStatement(name, value));
+            } else if (match(TokenType.S_TYPE, TokenType.WORD)) {
+
+            } else if (match(TokenType.V_TYPE, TokenType.WORD)) {
+
             } else if (match("print")) {
                 statements.add(new PrintStatement(expression()));
             } else {
