@@ -1,6 +1,6 @@
 package pl.edu.agh.amwj.ast;
 
-import pl.edu.agh.amwj.value.types.*;
+import pl.edu.agh.amwj.value.*;
 
 import static pl.edu.agh.amwj.Data.*;
 

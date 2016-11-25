@@ -1,4 +1,4 @@
-package pl.edu.agh.amwj.value.types;
+package pl.edu.agh.amwj.value;
 
 /**
  * Created by Kurtzz on 2016-11-10.

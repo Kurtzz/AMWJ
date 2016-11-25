@@ -1,9 +1,7 @@
 package pl.edu.agh.amwj;
 
-import pl.edu.agh.amwj.value.types.Value;
+import pl.edu.agh.amwj.value.Value;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,5 +13,4 @@ public class Data {
     public static final Map<String, Integer> heapmap = new HashMap<String, Integer>();
     public static final Map<String, Value> variables = new HashMap<String, Value>();
     public static int currentStatement;
-
 }

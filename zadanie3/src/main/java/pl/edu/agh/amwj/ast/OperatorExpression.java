@@ -1,8 +1,7 @@
 package pl.edu.agh.amwj.ast;
 
-import pl.edu.agh.amwj.value.types.IntegerValue;
-import pl.edu.agh.amwj.value.types.StringValue;
-import pl.edu.agh.amwj.value.types.Value;
+import pl.edu.agh.amwj.value.IntegerValue;
+import pl.edu.agh.amwj.value.Value;
 
 /**
  * Created by Kurtzz on 2016-11-10.

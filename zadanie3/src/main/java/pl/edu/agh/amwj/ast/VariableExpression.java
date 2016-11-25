@@ -1,13 +1,10 @@
 package pl.edu.agh.amwj.ast;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import pl.edu.agh.amwj.value.types.IntegerValue;
-import pl.edu.agh.amwj.value.types.Value;
+import pl.edu.agh.amwj.value.Value;
 
 import java.lang.reflect.InvocationTargetException;
 
-import static pl.edu.agh.amwj.Data.heap;
-import static pl.edu.agh.amwj.Data.heapmap;
 import static pl.edu.agh.amwj.Data.variables;
 
 /**

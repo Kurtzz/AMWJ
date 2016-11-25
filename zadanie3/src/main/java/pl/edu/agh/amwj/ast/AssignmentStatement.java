@@ -1,7 +1,7 @@
 package pl.edu.agh.amwj.ast;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import pl.edu.agh.amwj.value.types.Value;
+import pl.edu.agh.amwj.value.Value;
 
 import java.lang.reflect.InvocationTargetException;
 
