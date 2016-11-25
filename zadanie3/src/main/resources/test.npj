@@ -1,6 +1,6 @@
-VarDecl treetop;
-VarDecl t1;
-VarDecl t2;
+VarDeclT treetop;
+VarDeclT t1;
+VarDeclT t2;
 treetop.f1 = t1;
 treetop.f2 = t2;
 treetop.data = 1;

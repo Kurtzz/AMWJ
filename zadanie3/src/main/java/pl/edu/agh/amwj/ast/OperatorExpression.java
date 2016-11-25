@@ -32,43 +32,6 @@ public class OperatorExpression implements Expression {
                     return new IntegerValue(leftVal.toString().equals(
                             rightVal.toString()) ? 1 : 0);
                 }
-            case '+':
-                // Addition if the left argument is a number, otherwise do
-                // string concatenation.
-                if (leftVal instanceof IntegerValue) {
-                    return new IntegerValue(leftVal.toNumber() +
-                            rightVal.toNumber());
-                } else {
-                    return new StringValue(leftVal.toString() +
-                            rightVal.toString());
-                }
-            case '-':
-                return new IntegerValue(leftVal.toNumber() -
-                        rightVal.toNumber());
-            case '*':
-                return new IntegerValue(leftVal.toNumber() *
-                        rightVal.toNumber());
-            case '/':
-                return new IntegerValue(leftVal.toNumber() /
-                        rightVal.toNumber());
-            case '<':
-                // Coerce to the left argument's type, then compare.
-                if (leftVal instanceof IntegerValue) {
-                    return new IntegerValue((leftVal.toNumber() <
-                            rightVal.toNumber()) ? 1 : 0);
-                } else {
-                    return new IntegerValue((leftVal.toString().compareTo(
-                            rightVal.toString()) < 0) ? 1 : 0);
-                }
-            case '>':
-                // Coerce to the left argument's type, then compare.
-                if (leftVal instanceof IntegerValue) {
-                    return new IntegerValue((leftVal.toNumber() >
-                            rightVal.toNumber()) ? 1 : 0);
-                } else {
-                    return new IntegerValue((leftVal.toString().compareTo(
-                            rightVal.toString()) > 0) ? 1 : 0);
-                }
         }
         throw new Error("Unknown operator.");
     }

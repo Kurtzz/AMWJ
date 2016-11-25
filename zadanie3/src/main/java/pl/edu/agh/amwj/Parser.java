@@ -2,6 +2,7 @@ package pl.edu.agh.amwj;
 
 import pl.edu.agh.amwj.ast.*;
 import pl.edu.agh.amwj.value.types.IntegerValue;
+import pl.edu.agh.amwj.value.types.ObjectType;
 import pl.edu.agh.amwj.value.types.StringValue;
 
 import java.util.ArrayList;
@@ -30,20 +31,65 @@ public class Parser {
         List<Statement> statements = new ArrayList<Statement>();
 
         while (true) {
-            // Ignore empty lines.
-            while (match(TokenType.LINE));
 
+
+            /* LVALUE = RVALUE */
             if (match(TokenType.WORD, TokenType.EQUALS)) {
-                String name = last(2).text;
+                String name = last(2).getText();
                 Expression value = expression();
-                statements.add(new AssignStatement(name, value));
-            } else if (match(TokenType.S_TYPE, TokenType.WORD)) {
-
-            } else if (match(TokenType.V_TYPE, TokenType.WORD)) {
-
-            } else if (match("print")) {
+                System.out.println("Assignment statement: " + name + " = [" + value.getClass().getSimpleName() + "] " + value);
+                statements.add(new AssignmentStatement(name, value));
+                position++;
+            }
+            /* VarDeclS WORD; */
+            else if (match(TokenType.S_TYPE, TokenType.WORD, TokenType.SEMICOLON)) {
+                ObjectType type = ObjectType.S_TYPE;
+                String name = last(2).getText();
+                statements.add(new VariableDeclarationStatement(type, name));
+                System.out.println("Variable Decl statement: " + type.name() + " " + name);
+            }
+            /* VarDeclS WORD "STRING"; */
+            else if (match(TokenType.S_TYPE, TokenType.WORD, TokenType.STRING, TokenType.SEMICOLON)) {
+                ObjectType type = ObjectType.S_TYPE;
+                //correct?
+                String name = last(3).getText();
+                String value = last(2).getText();
+                statements.add(new VariableDeclarationStatement(type, name, new StringValue(value)));
+//                statements.add(new AssignmentStatement(name, new StringValue(value)));
+                System.out.println("Variable Decl statement: " + type.name() + " " + name + " \"" + value + "\"");
+            }
+            /* VarDeclS WORD NULL; */
+            else if (match(TokenType.S_TYPE, TokenType.WORD, TokenType.NULL, TokenType.SEMICOLON)) {
+                ObjectType type = ObjectType.S_TYPE;
+                //correct?
+                String name = last(3).getText();
+                statements.add(new VariableDeclarationStatement(type, name, null));
+//                statements.add(new AssignmentStatement(name, new StringValue(null)));
+                System.out.println("Variable Decl statement: " + type.name() + " " + name + " NULL");
+            }
+            /* VarDeclT WORD; */
+            else if (match(TokenType.T_TYPE, TokenType.WORD, TokenType.SEMICOLON)) {
+                ObjectType type = ObjectType.T_TYPE;
+                String name = last(2).getText();
+                statements.add(new VariableDeclarationStatement(type, name));
+                System.out.println("Variable Decl statement: " + type.name() + " " + name);
+            }
+            /* Print sth; */
+            else if (match("Print")) {
+                System.out.println("Print statement");
                 statements.add(new PrintStatement(expression()));
-            } else {
+                position++; //Semicolon
+            }
+            /* VarDeclT WORD; */
+            else if (match(TokenType.WORD, TokenType.SEMICOLON)) {
+                String command = last(2).getText();
+                if (command.equals("Collect")) {
+                    statements.add(new CollectStatement());
+                } else if (command.equals("HeapAnalyze")) {
+                   statements.add(new HeapAnalyzeStatement());
+                }
+            }
+            else {
                 break; // Unexpected token (likely EOF), so end.
             }
         }
@@ -52,65 +98,59 @@ public class Parser {
     }
 
     private Expression expression() {
-        return operator();
-    }
-
-    private Expression operator() {
-        Expression expression = atomic();
-
-        // Keep building operator expressions as long as we have operators.
-        while (match(TokenType.OPERATOR) ||
-                match(TokenType.EQUALS)) {
-            char operator = last(1).text.charAt(0);
-            Expression right = atomic();
-            expression = new OperatorExpression(expression, operator, right);
-        }
-
-        return expression;
-    }
-
-    private Expression atomic() {
         if (match(TokenType.WORD)) {
-            // A word is a reference to a variable.
-            return new VariableExpression(last(1).text);
-        } else if (match(TokenType.NUMBER)) {
-            return new IntegerValue(Double.parseDouble(last(1).text));
+            return new VariableExpression(last(1).getText());
+        } else if (match(TokenType.INTEGER)) {
+            return new IntegerValue(Integer.parseInt(last(1).getText()));
         } else if (match(TokenType.STRING)) {
-            return new StringValue(last(1).text);
-        } else if (match(TokenType.LEFT_PAREN)) {
-            // The contents of a parenthesized expression can be any
-            // expression. This lets us "restart" the precedence cascade
-            // so that you can have a lower precedence expression inside
-            // the parentheses.
-            Expression expression = expression();
-            consume(TokenType.RIGHT_PAREN);
-            return expression;
+            return new StringValue(last(1).getText());
         }
         throw new Error("Couldn't parse :(");
     }
 
+    private boolean match(TokenType type1, TokenType type2, TokenType type3, TokenType type4) {
+        if (get(0).getType() != type1) return false;
+        if (get(1).getType() != type2) return false;
+        if (get(2).getType() != type3) return false;
+        if (get(3).getType() != type4) return false;
+
+        position += 4;
+        return true;
+    }
+
+    private boolean match(TokenType type1, TokenType type2, TokenType type3) {
+        if (get(0).getType() != type1) return false;
+        if (get(1).getType() != type2) return false;
+        if (get(2).getType() != type3) return false;
+
+        position += 3;
+        return true;
+    }
+
     private boolean match(TokenType type1, TokenType type2) {
-        if (get(0).type != type1) return false;
-        if (get(1).type != type2) return false;
+        if (get(0).getType() != type1) return false;
+        if (get(1).getType() != type2) return false;
+
         position += 2;
         return true;
     }
 
     private boolean match(TokenType type) {
-        if (get(0).type != type) return false;
+        if (get(0).getType() != type) return false;
+
         position++;
         return true;
     }
 
     private boolean match(String name) {
-        if (get(0).type != TokenType.WORD) return false;
-        if (!get(0).text.equals(name)) return false;
+        if (get(0).getType() != TokenType.WORD) return false;
+        if (!get(0).getText().equals(name)) return false;
         position++;
         return true;
     }
 
     private Token consume(TokenType type) {
-        if (get(0).type != type) throw new Error("Expected " + type + ".");
+        if (get(0).getType() != type) throw new Error("Expected " + type + ".");
         return tokens.get(position++);
     }
 

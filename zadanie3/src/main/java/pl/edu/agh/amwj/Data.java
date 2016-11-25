@@ -11,9 +11,9 @@ import java.util.Map;
  * Created by Kurtzz on 2016-11-10.
  */
 public class Data {
+    public static final int[] heap = new int[128];
+    public static final Map<String, Integer> heapmap = new HashMap<String, Integer>();
     public static final Map<String, Value> variables = new HashMap<String, Value>();
-    public static InputStreamReader converter = new InputStreamReader(System.in);
-    public static final BufferedReader lineIn = new BufferedReader(converter);
     public static int currentStatement;
 
 }
