@@ -1,4 +1,4 @@
-package pl.edu.agh.amwj.ast;
+package pl.edu.agh.amwj.ast.expression;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import pl.edu.agh.amwj.value.Value;

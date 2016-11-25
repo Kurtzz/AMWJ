@@ -1,4 +1,6 @@
-package pl.edu.agh.amwj.ast;
+package pl.edu.agh.amwj.ast.statement;
+
+import pl.edu.agh.amwj.ast.expression.Expression;
 
 /**
  * Created by Kurtzz on 2016-11-10.

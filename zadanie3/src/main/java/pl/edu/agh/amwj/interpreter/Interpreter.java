@@ -1,9 +1,9 @@
 package pl.edu.agh.amwj.interpreter;
 
 import pl.edu.agh.amwj.Parser;
-import pl.edu.agh.amwj.Token;
-import pl.edu.agh.amwj.Tokenizer;
-import pl.edu.agh.amwj.ast.Statement;
+import pl.edu.agh.amwj.tokenizer.Token;
+import pl.edu.agh.amwj.tokenizer.Tokenizer;
+import pl.edu.agh.amwj.ast.statement.Statement;
 
 import java.util.List;
 
@@ -22,11 +22,8 @@ public class Interpreter {
         List<Statement> statements = parser.parse();
 
         // Interpret until we're done.
-        currentStatement = 0;
-        while (currentStatement < statements.size()) {
-            int thisStatement = currentStatement;
-            currentStatement++;
-            statements.get(thisStatement).execute();
+        for (Statement statement : statements) {
+            statement.execute();
         }
     }
 }

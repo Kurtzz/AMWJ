@@ -1,4 +1,4 @@
-package pl.edu.agh.amwj.ast;
+package pl.edu.agh.amwj.ast.expression;
 
 import pl.edu.agh.amwj.value.IntegerValue;
 import pl.edu.agh.amwj.value.Value;

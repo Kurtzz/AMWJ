@@ -1,9 +1,13 @@
 package pl.edu.agh.amwj;
 
-import pl.edu.agh.amwj.ast.*;
-import pl.edu.agh.amwj.value.types.IntegerValue;
-import pl.edu.agh.amwj.value.types.ObjectType;
-import pl.edu.agh.amwj.value.types.StringValue;
+import pl.edu.agh.amwj.ast.expression.Expression;
+import pl.edu.agh.amwj.ast.expression.VariableExpression;
+import pl.edu.agh.amwj.ast.statement.*;
+import pl.edu.agh.amwj.tokenizer.Token;
+import pl.edu.agh.amwj.tokenizer.TokenType;
+import pl.edu.agh.amwj.value.IntegerValue;
+import pl.edu.agh.amwj.value.ObjectType;
+import pl.edu.agh.amwj.value.StringValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +35,6 @@ public class Parser {
         List<Statement> statements = new ArrayList<Statement>();
 
         while (true) {
-
-
             /* LVALUE = RVALUE */
             if (match(TokenType.WORD, TokenType.EQUALS)) {
                 String name = last(2).getText();

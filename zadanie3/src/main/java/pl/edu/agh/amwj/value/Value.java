@@ -1,6 +1,6 @@
 package pl.edu.agh.amwj.value;
 
-import pl.edu.agh.amwj.ast.Expression;
+import pl.edu.agh.amwj.ast.expression.Expression;
 
 /**
  * Created by Kurtzz on 2016-11-10.
