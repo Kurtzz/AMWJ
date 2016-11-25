@@ -10,7 +10,7 @@ public class IntegerValue implements Value {
         this.value = value;
     }
     @Override public String toString() { return Integer.toString(value); }
-    public double toNumber() { return value; }
+    public int toNumber() { return value; }
 
     public Value evaluate() { return this; }
 }

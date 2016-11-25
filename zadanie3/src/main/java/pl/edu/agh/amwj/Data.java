@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class Data {
     public static final int[] heap = new int[128];
-    public static final Map<String, Integer> heapmap = new HashMap<String, Integer>();
+    public static int currentHeapPosition = 0;
     public static final Map<String, Value> variables = new HashMap<String, Value>();
     public static int currentStatement;
 }

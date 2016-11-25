@@ -2,6 +2,7 @@ package pl.edu.agh.amwj.ast;
 
 import pl.edu.agh.amwj.value.*;
 
+import static pl.edu.agh.amwj.Constants.*;
 import static pl.edu.agh.amwj.Data.*;
 
 /**
@@ -25,14 +26,30 @@ public class VariableDeclarationStatement implements Statement {
     public void execute() {
         switch (type) {
             case T_TYPE:
-                variables.put(name, new TValue(null, null, new IntegerValue(0)));
+                TValue newTValue = new TValue(null, null, new IntegerValue(0));
+                variables.put(name, newTValue);
+
+                heap[currentHeapPosition] = T_HEADER;
+                heap[++currentHeapPosition] = 0;
+                heap[++currentHeapPosition] = 0;
+                heap[++currentHeapPosition] = 0;
+
                 break;
             case S_TYPE:
-                if (value == null) {
-                    variables.put(name, new SValue(null));
+                SValue newSValue =  new SValue(null);
+
+                newSValue.setIndex(currentHeapPosition);
+                heap[currentHeapPosition] = S_HEADER;
+                if (value != null) {
+                    heap[++currentHeapPosition] = value.evaluate().toString().length();
+                    newSValue.setContent(new StringValue(value.evaluate().toString()));
                 } else {
-                    variables.put(name, new SValue((StringValue) value.evaluate()));
+                    heap[++currentHeapPosition] = 0;
+                    heap[++currentHeapPosition] = 0;
                 }
+
+                variables.put(name, newSValue);
+
                 break;
         }
     }

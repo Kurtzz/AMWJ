@@ -7,5 +7,5 @@ import pl.edu.agh.amwj.ast.Expression;
  */
 public interface Value extends Expression {
     String toString();
-    double toNumber();
+    int toNumber();
 }

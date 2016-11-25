@@ -10,7 +10,7 @@ public class StringValue implements Value {
         this.value = value;
     }
     @Override public String toString() { return value; }
-    public double toNumber() { return Double.parseDouble(value); }
+    public int toNumber() { return Integer.parseInt(value); }
 
     public Value evaluate() { return this; }
 }
