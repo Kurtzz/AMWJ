@@ -2,7 +2,6 @@ package pl.edu.agh.amwj.utils;
 
 import pl.edu.agh.amwj.exceptions.InvalidHeapSizeException;
 import pl.edu.agh.amwj.value.HeapValue;
-import pl.edu.agh.amwj.value.IntegerValue;
 import pl.edu.agh.amwj.value.SValue;
 import pl.edu.agh.amwj.value.TValue;
 
@@ -30,8 +29,8 @@ public class MyHeap {
     }
 
     public static MyHeap getInstance(int size) throws InvalidHeapSizeException {
-        if (size % 8 != 0) {
-            throw new InvalidHeapSizeException("Invalid heap size: " + size);
+        if ((size + 1) % 8 != 1) {
+            throw new InvalidHeapSizeException("Invalid heap size: " + size + 1);
         }
 
         return new MyHeap(size);
@@ -46,18 +45,14 @@ public class MyHeap {
             throw new RuntimeException("Out of memory");
         }
 
-        if (value == null) {
-            value = new TValue(null, null, new IntegerValue(0));
-        }
+//        if (value == null) {
+//            value = new TValue(null, null, new IntegerValue(0));
+//        }
 
         value.setHeapIndex(currentPosition);
         heapValues.add(value);
 
         currentPosition += 4;
-    }
-
-    private void allocateTValue() {
-        allocateTValue(null);
     }
 
     public void allocateSValue(SValue value) {
@@ -99,7 +94,7 @@ public class MyHeap {
     }
 
     public int[] getHeap() {
-        int[] heap = new int[size];
+        int[] heap = new int[size + 1];
         int index;
 
         for (HeapValue value : heapValues) {
@@ -125,6 +120,8 @@ public class MyHeap {
                 }
             }
         }
+
+        heap[size] = 0; //NULL
 
         return heap;
     }
