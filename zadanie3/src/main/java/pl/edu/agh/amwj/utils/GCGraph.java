@@ -15,7 +15,7 @@ public class GCGraph extends AbstractGraph<HeapValue> implements MutableGraph<He
     private MutableGraph<HeapValue> graph;
 
     public GCGraph() {
-        graph = GraphBuilder.directed().build();
+        graph = GraphBuilder.directed().allowsSelfLoops(true).build();
     }
 
     public boolean addNode(HeapValue node) {

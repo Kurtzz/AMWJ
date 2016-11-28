@@ -116,7 +116,9 @@ public class AssignmentStatement implements Statement {
 
     //TODO: rename it
     private void removeFromGraph(Value value) {
-        if (graph.predecessors(value).isEmpty() && !gcRoots.values().contains(value)) {
+        Set<HeapValue> predecessors = graph.predecessors(value);
+        if (graph.predecessors(value).isEmpty() && !gcRoots.values().contains(value)
+                || (predecessors.contains(value) && predecessors.size() == 1)) {
             Set<HeapValue> successors = graph.successors(value);
             graph.removeNode(value);
             for (Value successor : successors) {
