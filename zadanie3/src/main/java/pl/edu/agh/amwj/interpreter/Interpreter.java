@@ -23,7 +23,12 @@ public class Interpreter {
 
         // Interpret until we're done.
         for (Statement statement : statements) {
-            statement.execute();
+            try {
+                statement.execute();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
         }
     }
 }

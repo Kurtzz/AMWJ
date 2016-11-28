@@ -3,7 +3,6 @@ package pl.edu.agh.amwj.ast.statement;
 import pl.edu.agh.amwj.ast.expression.Expression;
 import pl.edu.agh.amwj.value.*;
 
-import static pl.edu.agh.amwj.Constants.*;
 import static pl.edu.agh.amwj.Data.*;
 
 /**
@@ -21,35 +20,38 @@ public class VariableDeclarationStatement implements Statement {
     }
 
     public VariableDeclarationStatement(ObjectType type, String name) {
-        this(type,  name, null);
+        this(type, name, null);
     }
 
     public void execute() {
         switch (type) {
             case T_TYPE:
                 TValue newTValue = new TValue(null, null, new IntegerValue(0));
-                variables.put(name, newTValue);
-
-                heap[currentHeapPosition] = T_HEADER;
-                heap[++currentHeapPosition] = 0;
-                heap[++currentHeapPosition] = 0;
-                heap[++currentHeapPosition] = 0;
+                gcRoots.put(name, newTValue); //Reference
+                graph.addNode(newTValue); //root node
+                newTValue.setHeapIndex(myHeap.getCurrentPosition()); //TODO: move to MyHeap
+                myHeap.allocateTValue();
 
                 break;
             case S_TYPE:
-                SValue newSValue =  new SValue(null);
+                SValue newSValue = new SValue(null);
+                newSValue.setContent((StringValue) value.evaluate());
 
-                newSValue.setIndex(currentHeapPosition);
-                heap[currentHeapPosition] = S_HEADER;
-                if (value != null) {
-                    heap[++currentHeapPosition] = value.evaluate().toString().length();
-                    newSValue.setContent(new StringValue(value.evaluate().toString()));
+                //If String Pool already contains value
+                if (value.evaluate() != null && gcRoots.containsValue(newSValue)) {
+                    for (Object sValue : gcRoots.values()) {
+                        if (sValue.equals(newSValue)) {
+                            newSValue.setHeapIndex(((SValue) sValue).getHeapIndex()); //TODO: move to MyHeap
+                            break;
+                        }
+                    }
                 } else {
-                    heap[++currentHeapPosition] = 0;
-                    heap[++currentHeapPosition] = 0;
+                    newSValue.setHeapIndex(myHeap.getCurrentPosition());
+                    myHeap.allocateSValue((StringValue) value.evaluate());
+                    graph.addNode(newSValue);
                 }
 
-                variables.put(name, newSValue);
+                gcRoots.put(name, newSValue);
 
                 break;
         }

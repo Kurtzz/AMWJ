@@ -5,7 +5,7 @@ import pl.edu.agh.amwj.value.Value;
 
 import java.lang.reflect.InvocationTargetException;
 
-import static pl.edu.agh.amwj.Data.variables;
+import static pl.edu.agh.amwj.Data.gcRoots;
 
 /**
  * Created by Kurtzz on 2016-11-10.
@@ -19,7 +19,7 @@ public class VariableExpression implements Expression {
 
     public Value evaluate() {
         String[] tokens = name.split("\\.", 2);
-        Value value = variables.get(tokens[0]);
+        Value value = (Value) gcRoots.get(tokens[0]);
 
         if (tokens.length == 1) {
             return value;

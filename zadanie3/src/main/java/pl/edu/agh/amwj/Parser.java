@@ -6,6 +6,7 @@ import pl.edu.agh.amwj.ast.statement.*;
 import pl.edu.agh.amwj.tokenizer.Token;
 import pl.edu.agh.amwj.tokenizer.TokenType;
 import pl.edu.agh.amwj.value.IntegerValue;
+import pl.edu.agh.amwj.value.NullValue;
 import pl.edu.agh.amwj.value.ObjectType;
 import pl.edu.agh.amwj.value.StringValue;
 
@@ -39,16 +40,9 @@ public class Parser {
             if (match(TokenType.WORD, TokenType.EQUALS)) {
                 String name = last(2).getText();
                 Expression value = expression();
-                System.out.println("Assignment statement: " + name + " = [" + value.getClass().getSimpleName() + "] " + value);
+                //System.out.println("Assignment statement: " + name + " = [" + value.getClass().getSimpleName() + "] " + value);
                 statements.add(new AssignmentStatement(name, value));
                 position++;
-            }
-            /* VarDeclS WORD; */
-            else if (match(TokenType.S_TYPE, TokenType.WORD, TokenType.SEMICOLON)) {
-                ObjectType type = ObjectType.S_TYPE;
-                String name = last(2).getText();
-                statements.add(new VariableDeclarationStatement(type, name));
-                System.out.println("Variable Decl statement: " + type.name() + " " + name);
             }
             /* VarDeclS WORD "STRING"; */
             else if (match(TokenType.S_TYPE, TokenType.WORD, TokenType.STRING, TokenType.SEMICOLON)) {
@@ -58,27 +52,27 @@ public class Parser {
                 String value = last(2).getText();
                 statements.add(new VariableDeclarationStatement(type, name, new StringValue(value)));
 //                statements.add(new AssignmentStatement(name, new StringValue(value)));
-                System.out.println("Variable Decl statement: " + type.name() + " " + name + " \"" + value + "\"");
+                //System.out.println("Variable Decl statement: " + type.name() + " " + name + " \"" + value + "\"");
             }
             /* VarDeclS WORD NULL; */
             else if (match(TokenType.S_TYPE, TokenType.WORD, TokenType.NULL, TokenType.SEMICOLON)) {
                 ObjectType type = ObjectType.S_TYPE;
                 //correct?
                 String name = last(3).getText();
-                statements.add(new VariableDeclarationStatement(type, name, null));
+                statements.add(new VariableDeclarationStatement(type, name, new NullValue()));
 //                statements.add(new AssignmentStatement(name, new StringValue(null)));
-                System.out.println("Variable Decl statement: " + type.name() + " " + name + " NULL");
+                //System.out.println("Variable Decl statement: " + type.name() + " " + name + " NULL");
             }
             /* VarDeclT WORD; */
             else if (match(TokenType.T_TYPE, TokenType.WORD, TokenType.SEMICOLON)) {
                 ObjectType type = ObjectType.T_TYPE;
                 String name = last(2).getText();
                 statements.add(new VariableDeclarationStatement(type, name));
-                System.out.println("Variable Decl statement: " + type.name() + " " + name);
+                //System.out.println("Variable Decl statement: " + type.name() + " " + name);
             }
             /* Print sth; */
             else if (match("Print")) {
-                System.out.println("Print statement");
+                //System.out.println("Print statement");
                 statements.add(new PrintStatement(expression()));
                 position++; //Semicolon
             }
@@ -106,6 +100,8 @@ public class Parser {
             return new IntegerValue(Integer.parseInt(last(1).getText()));
         } else if (match(TokenType.STRING)) {
             return new StringValue(last(1).getText());
+        } else if (match(TokenType.NULL)) {
+            return new NullValue();
         }
         throw new Error("Couldn't parse :(");
     }
