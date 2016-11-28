@@ -18,6 +18,6 @@ public class Data {
     public static void initializeData(int size) throws InvalidHeapSizeException {
         gcRoots = new HashMap<Object, Object>();
         graph = new GCGraph();
-        myHeap = MyHeap.getInstance(size);
+        myHeap = MyHeap.getInstance(size + 1);
     }
 }
