@@ -1,5 +1,6 @@
 package pl.edu.agh.amwj;
 
+import pl.edu.agh.amwj.exceptions.InvalidVariableNameException;
 import pl.edu.agh.amwj.interpreter.Interpreter;
 import pl.edu.agh.amwj.exceptions.InvalidHeapSizeException;
 
@@ -27,6 +28,10 @@ public class Main {
         String contents = readFile(args[0]);
 
         // Run it.
-        Interpreter.interpret(contents);
+        try {
+            Interpreter.interpret(contents);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

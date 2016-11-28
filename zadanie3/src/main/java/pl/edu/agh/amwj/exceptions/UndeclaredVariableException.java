@@ -3,7 +3,8 @@ package pl.edu.agh.amwj.exceptions;
 /**
  * Created by Comarch on 2016-11-28.
  */
-public class UndeclaredVariableException extends Exception{
+public class UndeclaredVariableException extends RuntimeException {
+
     public UndeclaredVariableException() {
     }
 

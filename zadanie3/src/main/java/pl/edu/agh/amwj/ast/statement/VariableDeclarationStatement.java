@@ -1,6 +1,7 @@
 package pl.edu.agh.amwj.ast.statement;
 
 import pl.edu.agh.amwj.ast.expression.Expression;
+import pl.edu.agh.amwj.exceptions.VariableAlreadyDefinedException;
 import pl.edu.agh.amwj.value.*;
 
 import static pl.edu.agh.amwj.Data.*;
@@ -24,6 +25,9 @@ public class VariableDeclarationStatement implements Statement {
     }
 
     public void execute() {
+        if (gcRoots.containsKey(name)) {
+            throw new VariableAlreadyDefinedException(name);
+        }
         switch (type) {
             case T_TYPE:
                 TValue newTValue = new TValue(null, null, new IntegerValue(0));

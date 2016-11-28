@@ -2,6 +2,7 @@ package pl.edu.agh.amwj.ast.statement;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import pl.edu.agh.amwj.ast.expression.Expression;
+import pl.edu.agh.amwj.exceptions.UndeclaredVariableException;
 import pl.edu.agh.amwj.value.*;
 
 import java.util.Set;
@@ -22,6 +23,11 @@ public class AssignmentStatement implements Statement {
 
     public void execute() throws Exception {
         String[] splittedName = name.split("\\.", 2);
+
+        if (!gcRoots.containsKey(splittedName[0])) {
+            throw new UndeclaredVariableException(splittedName[0]);
+        }
+
         Value object = (Value) gcRoots.get(splittedName[0]);
 
         if (object instanceof TValue) {

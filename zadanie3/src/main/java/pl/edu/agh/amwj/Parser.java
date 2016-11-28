@@ -3,6 +3,8 @@ package pl.edu.agh.amwj;
 import pl.edu.agh.amwj.ast.expression.Expression;
 import pl.edu.agh.amwj.ast.expression.VariableExpression;
 import pl.edu.agh.amwj.ast.statement.*;
+import pl.edu.agh.amwj.exceptions.InvalidIdentifierException;
+import pl.edu.agh.amwj.exceptions.InvalidVariableNameException;
 import pl.edu.agh.amwj.tokenizer.Token;
 import pl.edu.agh.amwj.tokenizer.TokenType;
 import pl.edu.agh.amwj.value.IntegerValue;
@@ -32,52 +34,57 @@ public class Parser {
      *
      * @return The list of parsed statements.
      */
-    public List<Statement> parse() {
+    public List<Statement> parse() throws InvalidVariableNameException, InvalidIdentifierException {
         List<Statement> statements = new ArrayList<Statement>();
 
         //TODO: test name correctness
         while (true) {
             /* LVALUE = RVALUE */
             if (match(TokenType.WORD, TokenType.EQUALS)) {
-                String name = last(2).getText();
+                String identifier = last(2).getText();
                 Expression value = expression();
-                //System.out.println("Assignment statement: " + name + " = [" + value.getClass().getSimpleName() + "] " + value);
-                statements.add(new AssignmentStatement(name, value));
+                if (!validateIdentifier(identifier)) {
+                    throw new InvalidIdentifierException(identifier);
+                }
+                statements.add(new AssignmentStatement(identifier, value));
                 position++;
             }
             /* VarDeclS WORD "STRING"; */
             else if (match(TokenType.S_TYPE, TokenType.WORD, TokenType.STRING, TokenType.SEMICOLON)) {
                 ObjectType type = ObjectType.S_TYPE;
-                //correct?
                 String name = last(3).getText();
                 String value = last(2).getText();
+                if (!validateVariableName(name)) {
+                    throw new InvalidVariableNameException(name);
+                }
                 statements.add(new VariableDeclarationStatement(type, name, new StringValue(value)));
-//                statements.add(new AssignmentStatement(name, new StringValue(value)));
-                //System.out.println("Variable Decl statement: " + type.name() + " " + name + " \"" + value + "\"");
             }
             /* VarDeclS WORD NULL; */
             else if (match(TokenType.S_TYPE, TokenType.WORD, TokenType.NULL, TokenType.SEMICOLON)) {
                 ObjectType type = ObjectType.S_TYPE;
-                //correct?
                 String name = last(3).getText();
+                if (!validateVariableName(name)) {
+                    throw new InvalidVariableNameException(name);
+                }
                 statements.add(new VariableDeclarationStatement(type, name, new NullValue()));
-//                statements.add(new AssignmentStatement(name, new StringValue(null)));
-                //System.out.println("Variable Decl statement: " + type.name() + " " + name + " NULL");
             }
             /* VarDeclT WORD; */
             else if (match(TokenType.T_TYPE, TokenType.WORD, TokenType.SEMICOLON)) {
                 ObjectType type = ObjectType.T_TYPE;
                 String name = last(2).getText();
+                System.out.println("Name: " + name);
+                if (!validateVariableName(name)) {
+                    System.out.println("Invalid name: " + name);
+                    throw new InvalidVariableNameException(name);
+                }
                 statements.add(new VariableDeclarationStatement(type, name));
-                //System.out.println("Variable Decl statement: " + type.name() + " " + name);
             }
             /* Print sth; */
             else if (match("Print")) {
-                //System.out.println("Print statement");
                 statements.add(new PrintStatement(expression()));
                 position++; //Semicolon
             }
-            /* VarDeclT WORD; */
+            /* Collect || HeapAnalyze */
             else if (match(TokenType.WORD, TokenType.SEMICOLON)) {
                 String command = last(2).getText();
                 if (command.equals("Collect")) {
@@ -148,14 +155,12 @@ public class Parser {
         return true;
     }
 
-    private Token consume(TokenType type) {
-        if (get(0).getType() != type) throw new Error("Expected " + type + ".");
-        return tokens.get(position++);
+    private boolean validateVariableName(String variableName) {
+        return variableName.matches("^[a-z][a-z\\d]*$");
     }
 
-    private Token consume(String name) {
-        if (!match(name)) throw new Error("Expected " + name + ".");
-        return last(1);
+    private boolean validateIdentifier(String identifier) {
+        return identifier.matches("^[a-z][a-z\\d]*([.][a-z][a-z\\d]+)*$");
     }
 
     private Token last(int offset) {

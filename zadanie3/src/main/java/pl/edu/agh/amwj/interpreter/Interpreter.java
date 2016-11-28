@@ -11,7 +11,7 @@ import java.util.List;
  * Created by Kurtzz on 2016-11-10.
  */
 public class Interpreter {
-    public static void interpret(String source) {
+    public static void interpret(String source) throws Exception {
         // Tokenize.
         List<Token> tokens = Tokenizer.tokenize(source);
 
@@ -21,12 +21,7 @@ public class Interpreter {
 
         // Interpret until we're done.
         for (Statement statement : statements) {
-            try {
-                statement.execute();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return;
-            }
+            statement.execute();
         }
     }
 }

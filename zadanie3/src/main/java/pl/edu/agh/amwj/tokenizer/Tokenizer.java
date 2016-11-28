@@ -1,5 +1,7 @@
 package pl.edu.agh.amwj.tokenizer;
 
+import pl.edu.agh.amwj.exceptions.ForbiddenCharacterException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +9,7 @@ import java.util.List;
  * Created by Kurtzz on 2016-11-10.
  */
 public class Tokenizer {
-    public static List<Token> tokenize(String source) {
+    public static List<Token> tokenize(String source) throws ForbiddenCharacterException {
         List<Token> tokens = new ArrayList<Token>();
 
         String token = "";
@@ -17,14 +19,12 @@ public class Tokenizer {
         String charTokens = "=;";
         TokenType[] tokenTypes = { TokenType.EQUALS, TokenType.SEMICOLON};
 
-        // Scan through the code one character at a time, building up the list
-        // of tokens.
+        // Scan through the code one character at a time, building up the list of tokens.
         for (int i = 0; i < source.length(); i++) {
             char c = source.charAt(i);
             switch (state) {
                 case DEFAULT:
                     if (charTokens.indexOf(c) != -1) {
-                        //System.out.println("Add token: " + Character.toString(c));
                         tokens.add(new Token(Character.toString(c), tokenTypes[charTokens.indexOf(c)]));
                     } else if (Character.isLetter(c) && c == 'V') {
                         token += c;
@@ -37,6 +37,10 @@ public class Tokenizer {
                         state = TokenizeState.INTEGER;
                     } else if (c == '"') {
                         state = TokenizeState.STRING;
+                    } else if(Character.isWhitespace(c)) {
+                        break;
+                    } else {
+                        throw new ForbiddenCharacterException("Character: \'" + Character.toString(c) + "\'");
                     }
                     break;
 
@@ -44,13 +48,11 @@ public class Tokenizer {
                     if (Character.isLetterOrDigit(c) || c == '.') {
                         token += c;
                     } else if (token.equals("NULL")) {
-                        //System.out.println("Add token: " + token);
                         tokens.add(new Token(token, TokenType.NULL));
                         token = "";
                         state = TokenizeState.DEFAULT;
                         i--; // Reprocess this character in the default state.
                     } else {
-                        //System.out.println("Add token: " + token);
                         tokens.add(new Token(token, TokenType.WORD));
                         token = "";
                         state = TokenizeState.DEFAULT;
@@ -62,7 +64,6 @@ public class Tokenizer {
                     if (Character.isDigit(c)) {
                         token += c;
                     } else {
-                        //System.out.println("Add token: " + token);
                         tokens.add(new Token(token, TokenType.INTEGER));
                         token = "";
                         state = TokenizeState.DEFAULT;
@@ -72,7 +73,6 @@ public class Tokenizer {
 
                 case STRING:
                     if (c == '"') {
-                        //System.out.println("Add token: \"" + token + "\"");
                         tokens.add(new Token(token, TokenType.STRING));
                         token = "";
                         state = TokenizeState.DEFAULT;
@@ -84,13 +84,11 @@ public class Tokenizer {
                 case TYPE:
                     if (c == 'S') {
                         token += c;
-                        //System.out.println("Add token: " + token);
                         tokens.add(new Token(token, TokenType.S_TYPE));
                         token = "";
                         state = TokenizeState.DEFAULT;
                     } else if (c == 'T') {
                         token += c;
-                        //System.out.println("Add token: " + token);
                         tokens.add(new Token(token, TokenType.T_TYPE));
                         token = "";
                         state = TokenizeState.DEFAULT;
