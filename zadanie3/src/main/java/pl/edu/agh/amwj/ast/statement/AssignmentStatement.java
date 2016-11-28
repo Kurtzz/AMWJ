@@ -2,10 +2,7 @@ package pl.edu.agh.amwj.ast.statement;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import pl.edu.agh.amwj.ast.expression.Expression;
-import pl.edu.agh.amwj.value.SValue;
-import pl.edu.agh.amwj.value.StringValue;
-import pl.edu.agh.amwj.value.TValue;
-import pl.edu.agh.amwj.value.Value;
+import pl.edu.agh.amwj.value.*;
 
 import java.util.Set;
 
@@ -64,7 +61,7 @@ public class AssignmentStatement implements Statement {
         if (splittedName2.length == 1) { //varname.field
             updatedValue = (TValue) object;
             lastPart = splittedName2[0];
-        } else if(splittedName2.length == 2) { //varname.field.field
+        } else if (splittedName2.length == 2) { //varname.field.field
             updatedValue = (TValue) PropertyUtils.getProperty(object, splittedName2[0]);
             lastPart = splittedName2[1];
         } else { //varname.field.field.field ...
@@ -78,13 +75,11 @@ public class AssignmentStatement implements Statement {
             updatedValue = (TValue) PropertyUtils.getNestedProperty(object, stringBuilder.toString());
         }
 
-        myHeap.updateTValue(updatedValue);
-
         if (lastPart.equals("f1") || lastPart.equals("f2")) {
             if (oldValue != null) {
                 graph.removeEdge(updatedValue, oldValue);
             }
-            graph.putEdge(updatedValue, value.evaluate());
+            graph.putEdge(updatedValue, (HeapValue) value.evaluate());
         }
     }
 
@@ -98,18 +93,8 @@ public class AssignmentStatement implements Statement {
             SValue newSValue = new SValue((StringValue) evaluatedValue);
             newSValue.setContent((StringValue) evaluatedValue);
 
-            //If String Pool already contains value
-            if (gcRoots.containsValue(newSValue)) {
-                for (Object sValue : gcRoots.values()) {
-                    if (sValue.equals(newSValue)) {
-                        newSValue.setHeapIndex(((SValue) sValue).getHeapIndex());
-                    }
-                }
-            } else {
-                newSValue.setHeapIndex(myHeap.getCurrentPosition()); //TODO: move to MyHeap
-                myHeap.allocateSValue(((StringValue) evaluatedValue));
-                graph.addNode(newSValue);
-            }
+            myHeap.allocateSValue(((SValue) newSValue));
+            graph.addNode(newSValue);
 
             gcRoots.put(splittedName[0], newSValue);
 
@@ -126,16 +111,11 @@ public class AssignmentStatement implements Statement {
     //TODO: rename it
     private void removeFromGraph(Value value) {
         if (graph.predecessors(value).isEmpty() && !gcRoots.values().contains(value)) {
-            Set<Value> successors = graph.successors(value);
+            Set<HeapValue> successors = graph.successors(value);
             graph.removeNode(value);
             for (Value successor : successors) {
                 removeFromGraph(successor);
             }
         }
-    }
-
-    @Override
-    public String toString() {
-        return name + " = " + value;
     }
 }

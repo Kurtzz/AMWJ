@@ -27,30 +27,18 @@ public class VariableDeclarationStatement implements Statement {
         switch (type) {
             case T_TYPE:
                 TValue newTValue = new TValue(null, null, new IntegerValue(0));
+
                 gcRoots.put(name, newTValue); //Reference
+                myHeap.allocateTValue(newTValue);
                 graph.addNode(newTValue); //root node
-                newTValue.setHeapIndex(myHeap.getCurrentPosition()); //TODO: move to MyHeap
-                myHeap.allocateTValue();
 
                 break;
             case S_TYPE:
                 SValue newSValue = new SValue(null);
                 newSValue.setContent((StringValue) value.evaluate());
 
-                //If String Pool already contains value
-                if (value.evaluate() != null && gcRoots.containsValue(newSValue)) {
-                    for (Object sValue : gcRoots.values()) {
-                        if (sValue.equals(newSValue)) {
-                            newSValue.setHeapIndex(((SValue) sValue).getHeapIndex()); //TODO: move to MyHeap
-                            break;
-                        }
-                    }
-                } else {
-                    newSValue.setHeapIndex(myHeap.getCurrentPosition());
-                    myHeap.allocateSValue((StringValue) value.evaluate());
-                    graph.addNode(newSValue);
-                }
-
+                myHeap.allocateSValue(newSValue);
+                graph.addNode(newSValue);
                 gcRoots.put(name, newSValue);
 
                 break;

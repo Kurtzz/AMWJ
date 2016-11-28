@@ -35,6 +35,7 @@ public class Parser {
     public List<Statement> parse() {
         List<Statement> statements = new ArrayList<Statement>();
 
+        //TODO: test name correctness
         while (true) {
             /* LVALUE = RVALUE */
             if (match(TokenType.WORD, TokenType.EQUALS)) {

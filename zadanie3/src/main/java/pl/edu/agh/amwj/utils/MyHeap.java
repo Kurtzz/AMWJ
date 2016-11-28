@@ -1,98 +1,143 @@
 package pl.edu.agh.amwj.utils;
 
-import pl.edu.agh.amwj.value.StringValue;
+import pl.edu.agh.amwj.exceptions.InvalidHeapSizeException;
+import pl.edu.agh.amwj.value.HeapValue;
+import pl.edu.agh.amwj.value.IntegerValue;
+import pl.edu.agh.amwj.value.SValue;
 import pl.edu.agh.amwj.value.TValue;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static pl.edu.agh.amwj.Constants.S_HEADER;
 import static pl.edu.agh.amwj.Constants.T_HEADER;
+import static pl.edu.agh.amwj.Data.graph;
 
 /**
  * Created by P on 27.11.2016.
  */
 public class MyHeap {
-    private int[] heap;
+    private List<HeapValue> heapValues;
     private int currentPosition;
+    private int size;
+    private int currentHalf; //left = -1, right = 1;
 
-    public MyHeap(int size) {
-        heap = new int[size];
+    private MyHeap(int size) {
+        this.size = size;
+        heapValues = new ArrayList<HeapValue>();
         currentPosition = 0;
+        currentHalf = -1;
     }
 
-    public void allocateTValue() {
-        heap[currentPosition] = T_HEADER;
-        heap[++currentPosition] = 0; //f1 NULL
-        heap[++currentPosition] = 0; //f2 NULL
-        heap[++currentPosition] = 0; //data 0
-        currentPosition++;
+    public static MyHeap getInstance(int size) throws InvalidHeapSizeException {
+        if (size % 8 != 0) {
+            throw new InvalidHeapSizeException("Invalid heap size: " + size);
+        }
+
+        return new MyHeap(size);
     }
 
-    public void allocateSValue(StringValue value) {
-        heap[currentPosition] = S_HEADER; //header
+    public void allocateTValue(TValue value) {
+        if (isNotEnoughSpace(4)) {
+            sweep();
+        }
+
+        if (isNotEnoughSpace(4)) {
+            throw new RuntimeException("Out of memory");
+        }
 
         if (value == null) {
-            heap[++currentPosition] = 0; //length 0
-            heap[++currentPosition] = 0; //nothing
-            currentPosition++;
-
-            return;
+            value = new TValue(null, null, new IntegerValue(0));
         }
 
-        //NOT NULL
-        heap[++currentPosition] = value.toString().length(); //length
-        char[] contentArray = value.toString().toCharArray();
-        currentPosition++; //data position
+        value.setHeapIndex(currentPosition);
+        heapValues.add(value);
 
-        for (char aContentArray : contentArray) {
-            heap[currentPosition++] = (int)aContentArray;
-        }
+        currentPosition += 4;
     }
 
-    public void updateTValue(TValue value) {
-        int index = value.getHeapIndex();
-        if (value.getF1() != null) {
-            heap[index + 1] = value.getF1().getHeapIndex();
+    private void allocateTValue() {
+        allocateTValue(null);
+    }
+
+    public void allocateSValue(SValue value) {
+        if (isNotEnoughSpace(value.toString().length())) {
+            sweep();
         }
-        if (value.getF2() != null) {
-            heap[index + 2] = value.getF2().getHeapIndex();
+
+        if (isNotEnoughSpace(value.toString().length())) {
+            throw new RuntimeException("Out of memory");
         }
-        heap[index + 3] = value.getData().toNumber();
+
+        value.setHeapIndex(currentPosition);
+        heapValues.add(value);
+        currentPosition += value.toString().length() + 1;
+    }
+
+    private boolean isNotEnoughSpace(int requireSpace) {
+        int spaceLeft = (size / 2) - currentPosition % (size / 2);
+
+        /* No more space
+           OR we accidentally move to right half == left is full
+           OR right half is over
+        */
+        return (spaceLeft - requireSpace) < 0 || ((currentPosition >= (size / 2)) && currentHalf < 0) || currentPosition >= size;
+    }
+
+    public void sweep() {
+        heapValues.clear();
+
+        currentPosition = (currentHalf < 0 ? (size / 2) : 0);
+        currentHalf = (currentPosition / (size / 4)) - 1;
+        for (HeapValue value : graph.nodes()) {
+            if (value instanceof TValue) {
+                allocateTValue((TValue) value);
+            } else if (value instanceof SValue) {
+                allocateSValue(((SValue) value));
+            }
+        }
     }
 
     public int[] getHeap() {
+        int[] heap = new int[size];
+        int index;
+
+        for (HeapValue value : heapValues) {
+            index = value.getHeapIndex();
+
+            if (value instanceof TValue) {
+                TValue tValue = (TValue) value;
+                heap[index] = T_HEADER;
+                heap[++index] = (tValue.getF1()) == null ? 0 : tValue.getF1().getHeapIndex();
+                heap[++index] = (tValue.getF2()) == null ? 0 : tValue.getF2().getHeapIndex();
+                heap[++index] = tValue.getData().toNumber();
+            }
+
+            if (value instanceof SValue) {
+                SValue sValue = (SValue) value;
+                heap[index] = S_HEADER;
+                heap[++index] = sValue.getContent().toString().length();
+
+                index++;
+                char[] contentArray = sValue.toString().toCharArray();
+                for (char aContentArray : contentArray) {
+                    heap[index++] = (int) aContentArray;
+                }
+            }
+        }
+
         return heap;
     }
 
-    public int getCurrentPosition() {
-        return currentPosition;
+    public List<HeapValue> getHeapValues() {
+        return heapValues;
+    }
+
+    public int getNullIndex() {
+        return size;
     }
 
     public void print() {
-        System.out.print("Heap{");
-        for (int i = 0; i < heap.length; i++) {
-            if (i > 0) {
-                System.out.print(", ");
-            }
-            if (heap[i] == T_HEADER) {
-                System.out.print(i + ": ");
-                System.out.print("TVALUE: [" +
-                        heap[i] + ", " +
-                        heap[++i] + ", " +
-                        heap[++i] + ", " +
-                        heap[++i] + "]"
-                );
-            } else if (heap[i] == S_HEADER) {
-                System.out.print(i + ": ");
-                System.out.print("SVALUE: [" +
-                        heap[i] + ", " +
-                        heap[++i] + ", \""
-                );
-
-                int maxIndex = heap[i] + (++i);
-                while(i < maxIndex) {
-                    System.out.print((char)heap[i++]);
-                }
-                System.out.print("\"]"); i--;
-            }
-        }
+        System.out.println("HEAP currentHalf = " + ((currentHalf < 0) ? "left" : "right") + "\n\t" + heapValues.toString());
     }
 }

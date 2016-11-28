@@ -1,13 +1,11 @@
 package pl.edu.agh.amwj.interpreter;
 
 import pl.edu.agh.amwj.Parser;
+import pl.edu.agh.amwj.ast.statement.Statement;
 import pl.edu.agh.amwj.tokenizer.Token;
 import pl.edu.agh.amwj.tokenizer.Tokenizer;
-import pl.edu.agh.amwj.ast.statement.Statement;
 
 import java.util.List;
-
-import static pl.edu.agh.amwj.Data.currentStatement;
 
 /**
  * Created by Kurtzz on 2016-11-10.

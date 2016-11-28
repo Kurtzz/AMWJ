@@ -1,6 +1,7 @@
 package pl.edu.agh.amwj;
 
 import pl.edu.agh.amwj.interpreter.Interpreter;
+import pl.edu.agh.amwj.exceptions.InvalidHeapSizeException;
 
 import static pl.edu.agh.amwj.utils.FileReader.readFile;
 
@@ -11,8 +12,14 @@ public class Main {
     public static void main(String[] args) {
         // Just show the usage and quit if a script wasn't provided.
         if (args.length != 1) {
-            System.out.println("Usage: main <script>");
-            System.out.println("Where <script> is a relative path to a .jas script to run.");
+            System.out.println("Usage: main <npj file path>");
+            return;
+        }
+
+        try {
+            Data.initializeData(24);
+        } catch (InvalidHeapSizeException e) {
+            e.printStackTrace();
             return;
         }
 

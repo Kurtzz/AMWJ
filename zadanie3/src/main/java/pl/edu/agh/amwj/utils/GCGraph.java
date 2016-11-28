@@ -4,25 +4,25 @@ import com.google.common.graph.AbstractGraph;
 import com.google.common.graph.ElementOrder;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
-import pl.edu.agh.amwj.value.Value;
+import pl.edu.agh.amwj.value.HeapValue;
 
 import java.util.Set;
 
 /**
  * Created by P on 27.11.2016.
  */
-public class GCGraph extends AbstractGraph<Value> implements MutableGraph<Value> {
-    private MutableGraph<Value> graph;
+public class GCGraph extends AbstractGraph<HeapValue> implements MutableGraph<HeapValue> {
+    private MutableGraph<HeapValue> graph;
 
     public GCGraph() {
         graph = GraphBuilder.directed().build();
     }
 
-    public boolean addNode(Value node) {
+    public boolean addNode(HeapValue node) {
         return graph.addNode(node);
     }
 
-    public boolean putEdge(Value nodeU, Value nodeV) {
+    public boolean putEdge(HeapValue nodeU, HeapValue nodeV) {
         return graph.putEdge(nodeU, nodeV);
     }
 
@@ -34,7 +34,7 @@ public class GCGraph extends AbstractGraph<Value> implements MutableGraph<Value>
         return graph.removeNode(node);
     }
 
-    public Set<Value> nodes() {
+    public Set<HeapValue> nodes() {
         return graph.nodes();
     }
 
@@ -46,19 +46,19 @@ public class GCGraph extends AbstractGraph<Value> implements MutableGraph<Value>
         return graph.allowsSelfLoops();
     }
 
-    public ElementOrder<Value> nodeOrder() {
+    public ElementOrder<HeapValue> nodeOrder() {
         return graph.nodeOrder();
     }
 
-    public Set<Value> adjacentNodes(Object o) {
+    public Set<HeapValue> adjacentNodes(Object o) {
         return graph.adjacentNodes(o);
     }
 
-    public Set<Value> predecessors(Object o) {
+    public Set<HeapValue> predecessors(Object o) {
         return graph.predecessors(o);
     }
 
-    public Set<Value> successors(Object o) {
+    public Set<HeapValue> successors(Object o) {
         return graph.successors(o);
     }
 

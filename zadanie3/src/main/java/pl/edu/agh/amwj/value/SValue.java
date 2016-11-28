@@ -3,9 +3,9 @@ package pl.edu.agh.amwj.value;
 /**
  * Created by Kurtzz on 10.11.2016.
  */
-public class SValue implements Value {
+public class SValue extends HeapValue {
     private StringValue content;
-    private int heapIndex;
+//    private int heapIndex;
 
     public SValue(StringValue content) {
         this.content = content;
@@ -23,13 +23,13 @@ public class SValue implements Value {
         this.content = content;
     }
 
-    public int getHeapIndex() {
-        return heapIndex;
-    }
-
-    public void setHeapIndex(int heapIndex) {
-        this.heapIndex = heapIndex;
-    }
+//    public int getHeapIndex() {
+//        return heapIndex;
+//    }
+//
+//    public void setHeapIndex(int heapIndex) {
+//        this.heapIndex = heapIndex;
+//    }
 
     public Value evaluate() {
         return this;
