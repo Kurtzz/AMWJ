@@ -1,7 +1,7 @@
 package pl.edu.agh.amwj.value;
 
 /**
- * Created by Comarch on 2016-11-28.
+ * Created by Kurtzz on 2016-11-28.
  */
 public abstract class HeapValue implements Value {
     private int heapIndex;

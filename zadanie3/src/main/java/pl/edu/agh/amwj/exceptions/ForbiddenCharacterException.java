@@ -1,7 +1,7 @@
 package pl.edu.agh.amwj.exceptions;
 
 /**
- * Created by Comarch on 2016-11-28.
+ * Created by Kurtzz on 2016-11-28.
  */
 public class ForbiddenCharacterException extends Exception {
     public ForbiddenCharacterException() {
