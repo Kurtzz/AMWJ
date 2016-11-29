@@ -1,39 +1,41 @@
-package pl.edu.agh.amwj.utils;
+package pl.edu.agh.amwj.collector;
 
 import pl.edu.agh.amwj.exceptions.InvalidHeapSizeException;
-import pl.edu.agh.amwj.value.HeapValue;
-import pl.edu.agh.amwj.value.SValue;
-import pl.edu.agh.amwj.value.TValue;
+import pl.edu.agh.amwj.ast.value.HeapValue;
+import pl.edu.agh.amwj.ast.value.SValue;
+import pl.edu.agh.amwj.ast.value.TValue;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static pl.edu.agh.amwj.Constants.S_HEADER;
-import static pl.edu.agh.amwj.Constants.T_HEADER;
-import static pl.edu.agh.amwj.Data.graph;
+import static pl.edu.agh.amwj.collector.NpjHeapConstants.S_HEADER;
+import static pl.edu.agh.amwj.collector.NpjHeapConstants.T_HEADER;
+import static pl.edu.agh.amwj.Data.npjGraph;
 
 /**
  * Created by P on 27.11.2016.
  */
-public class MyHeap {
+public class NpjHeap {
     private List<HeapValue> heapValues;
-    private int currentPosition;
-    private int size;
+    private int currentHeapIndexPosition;
+    private int heapSize; //real size + 1 (NULL)
+    private int realSize;
     private int currentHalf; //left = -1, right = 1;
 
-    private MyHeap(int size) {
-        this.size = size;
-        heapValues = new ArrayList<HeapValue>();
-        currentPosition = 0;
-        currentHalf = -1;
+    private NpjHeap(int heapSize) {
+        this.heapSize = heapSize;
+        this.realSize = heapSize - 1;
+        this.heapValues = new ArrayList<HeapValue>();
+        this.currentHeapIndexPosition = 0;
+        this.currentHalf = -1;
     }
 
-    public static MyHeap getInstance(int size) throws InvalidHeapSizeException {
-        if ((size + 1) % 8 != 1) {
-            throw new InvalidHeapSizeException("Invalid heap size: " + size + 1);
+    public static NpjHeap getInstance(int size) throws InvalidHeapSizeException {
+        if (size % 8 != 1) {
+            throw new InvalidHeapSizeException("Invalid heap size: " + size);
         }
 
-        return new MyHeap(size);
+        return new NpjHeap(size);
     }
 
     public void allocateTValue(TValue value) {
@@ -45,14 +47,10 @@ public class MyHeap {
             throw new RuntimeException("Out of memory");
         }
 
-//        if (value == null) {
-//            value = new TValue(null, null, new IntegerValue(0));
-//        }
-
-        value.setHeapIndex(currentPosition);
+        value.setHeapIndex(currentHeapIndexPosition);
         heapValues.add(value);
 
-        currentPosition += 4;
+        currentHeapIndexPosition += 4;
     }
 
     public void allocateSValue(SValue value) {
@@ -64,37 +62,36 @@ public class MyHeap {
             throw new RuntimeException("Out of memory");
         }
 
-        value.setHeapIndex(currentPosition);
+        value.setHeapIndex(currentHeapIndexPosition);
         heapValues.add(value);
-        currentPosition += value.toString().length() + 1;
+        currentHeapIndexPosition += value.toString().length() + 1;
     }
 
     private boolean isNotEnoughSpace(int requireSpace) {
-        int spaceLeft = (size / 2) - currentPosition % (size / 2);
+        int spaceLeft = (realSize / 2) - currentHeapIndexPosition % (realSize / 2);
 
         /* No more space
            OR we accidentally move to right half == left is full
            OR right half is over
         */
-        return (spaceLeft - requireSpace) < 0 || ((currentPosition >= (size / 2)) && currentHalf < 0) || currentPosition >= size;
+        return (spaceLeft - requireSpace) < 0
+                || ((currentHeapIndexPosition >= (realSize / 2)) && currentHalf < 0)
+                || (currentHeapIndexPosition >= realSize);
     }
 
     public void sweep() {
-        heapValues.clear();
+        currentHeapIndexPosition = (currentHalf < 0 ? (realSize / 2) : 0);
+        currentHalf = (currentHeapIndexPosition / (realSize / 4)) - 1;
+        heapValues.retainAll(npjGraph.nodes());
 
-        currentPosition = (currentHalf < 0 ? (size / 2) : 0);
-        currentHalf = (currentPosition / (size / 4)) - 1;
-        for (HeapValue value : graph.nodes()) {
-            if (value instanceof TValue) {
-                allocateTValue((TValue) value);
-            } else if (value instanceof SValue) {
-                allocateSValue(((SValue) value));
-            }
+        for (HeapValue value : heapValues) {
+            value.setHeapIndex(currentHeapIndexPosition);
+            currentHeapIndexPosition += value.getSize();
         }
     }
 
     public int[] getHeap() {
-        int[] heap = new int[size + 1];
+        int[] heap = new int[heapSize];
         int index;
 
         for (HeapValue value : heapValues) {
@@ -121,7 +118,7 @@ public class MyHeap {
             }
         }
 
-        heap[size] = 0; //NULL
+        heap[heapSize - 1] = Integer.MIN_VALUE; //NULL
 
         return heap;
     }
@@ -131,10 +128,11 @@ public class MyHeap {
     }
 
     public int getNullIndex() {
-        return size;
+        return (heapSize - 1);
     }
 
-    public void print() {
-        System.out.println("HEAP currentHalf = " + ((currentHalf < 0) ? "left" : "right") + "\n\t" + heapValues.toString());
+    @Override
+    public String toString() {
+        return "HEAP{currentHalf = " + ((currentHalf < 0) ? "left" : "right") + ", " + heapValues.toString() + "}";
     }
 }

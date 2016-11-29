@@ -1,4 +1,4 @@
-package pl.edu.agh.amwj.template;
+package pl.edu.agh.amwj.collector;
 
 import java.util.Map;
 

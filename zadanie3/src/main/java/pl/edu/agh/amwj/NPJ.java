@@ -1,4 +1,6 @@
-package pl.edu.agh.amwj.template;
+package pl.edu.agh.amwj;
+
+import pl.edu.agh.amwj.collector.Collector;
 
 import java.util.Collection;
 import java.util.Map;

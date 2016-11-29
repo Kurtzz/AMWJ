@@ -1,4 +1,4 @@
-package pl.edu.agh.amwj.value;
+package pl.edu.agh.amwj.ast.value;
 
 import pl.edu.agh.amwj.ast.expression.Expression;
 

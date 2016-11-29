@@ -1,10 +1,10 @@
-package pl.edu.agh.amwj.utils;
+package pl.edu.agh.amwj.collector;
 
 import com.google.common.graph.AbstractGraph;
 import com.google.common.graph.ElementOrder;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
-import pl.edu.agh.amwj.value.HeapValue;
+import pl.edu.agh.amwj.ast.value.HeapValue;
 
 import java.util.Set;
 

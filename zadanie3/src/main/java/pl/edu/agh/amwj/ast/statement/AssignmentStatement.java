@@ -2,8 +2,9 @@ package pl.edu.agh.amwj.ast.statement;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import pl.edu.agh.amwj.ast.expression.Expression;
+import pl.edu.agh.amwj.ast.value.*;
+import pl.edu.agh.amwj.collector.MyEdge;
 import pl.edu.agh.amwj.exceptions.UndeclaredVariableException;
-import pl.edu.agh.amwj.value.*;
 
 import java.util.Set;
 
@@ -24,11 +25,11 @@ public class AssignmentStatement implements Statement {
     public void execute() throws Exception {
         String[] splittedName = name.split("\\.", 2);
 
-        if (!gcRoots.containsKey(splittedName[0])) {
+        if (!declaredVariables.containsKey(splittedName[0])) {
             throw new UndeclaredVariableException(splittedName[0]);
         }
 
-        Value object = (Value) gcRoots.get(splittedName[0]);
+        Value object = (Value) declaredVariables.get(splittedName[0]);
 
         if (object instanceof TValue) {
             assignT(object, splittedName);
@@ -39,15 +40,17 @@ public class AssignmentStatement implements Statement {
 
     private void assignT(Value object, String[] splittedName) throws Exception {
         //varname = <Expression>
+        Value evaluatedValue = value.evaluate();
+
         if (splittedName.length == 1) {
-            if (value.evaluate() != null && !object.getClass().equals(value.evaluate().getClass())) {
-                throw new UnsupportedOperationException(object.getClass().getSimpleName() + " = " + value.evaluate().getClass().getSimpleName());
+            if (evaluatedValue != null && !object.getClass().equals(evaluatedValue.getClass())) {
+                throw new UnsupportedOperationException(object.getClass().getSimpleName() + " = " + evaluatedValue.getClass().getSimpleName());
             }
 
-            if (value.evaluate() == null) { //<Expression> = NULL
-                gcRoots.remove(splittedName[0]);
+            if (evaluatedValue == null) { //<Expression> = NULL
+                declaredVariables.put(splittedName[0], null);
             } else {
-                gcRoots.put(splittedName[0], value.evaluate());
+                declaredVariables.put(splittedName[0], evaluatedValue);
             }
 
             removeFromGraph(object);
@@ -58,7 +61,7 @@ public class AssignmentStatement implements Statement {
         //varname.field... = <Expression>
 
         Value oldValue = (Value) PropertyUtils.getNestedProperty(object, splittedName[1]);
-        PropertyUtils.setNestedProperty(object, splittedName[1], value.evaluate());
+        PropertyUtils.setNestedProperty(object, splittedName[1], evaluatedValue);
 
         String[] splittedName2 = splittedName[1].split("\\.");
 
@@ -77,15 +80,25 @@ public class AssignmentStatement implements Statement {
                 stringBuilder.append(".").append(splittedName2[i]);
             }
             lastPart = splittedName2[splittedName2.length - 1]; //varname.field.field.(...).lastpart
-
             updatedValue = (TValue) PropertyUtils.getNestedProperty(object, stringBuilder.toString());
         }
 
         if (lastPart.equals("f1") || lastPart.equals("f2")) {
+
+            //There is an edge
             if (oldValue != null) {
-                graph.removeEdge(updatedValue, oldValue);
+                MyEdge edgeToRemove = null;
+                for (MyEdge edge : npjGraph.edgesConnecting(updatedValue, oldValue)) {
+                    if (edge.getType().getName().equals(lastPart)) {
+                        edgeToRemove = edge;
+                    }
+                }
+                npjGraph.removeEdge(edgeToRemove);
+                removeFromGraph(oldValue);
             }
-            graph.putEdge(updatedValue, (HeapValue) value.evaluate());
+            if (evaluatedValue != null) {
+                npjGraph.addEdge(updatedValue, (HeapValue) evaluatedValue, new MyEdge(lastPart));
+            }
         }
     }
 
@@ -93,34 +106,36 @@ public class AssignmentStatement implements Statement {
         Value evaluatedValue = value.evaluate();
 
         if (evaluatedValue instanceof SValue) {
-            gcRoots.put(splittedName[0], evaluatedValue);
-
+            declaredVariables.put(splittedName[0], evaluatedValue);
         } else if (evaluatedValue instanceof StringValue) {
             SValue newSValue = new SValue((StringValue) evaluatedValue);
             newSValue.setContent((StringValue) evaluatedValue);
 
-            myHeap.allocateSValue(((SValue) newSValue));
-            graph.addNode(newSValue);
+            npjHeap.allocateSValue(newSValue);
+            npjGraph.addNode(newSValue);
 
-            gcRoots.put(splittedName[0], newSValue);
-
+            declaredVariables.put(splittedName[0], newSValue);
         } else if (evaluatedValue == null) {
-            gcRoots.remove(splittedName[0]);
+            declaredVariables.put(splittedName[0], new NullValue());
         }
 
         //There is no reference to that String
-        if (!gcRoots.containsValue(object)) {
-            graph.removeNode(object);
+        if (!declaredVariables.containsValue(object)) {
+            npjGraph.removeNode(object);
         }
     }
 
     //TODO: rename it
     private void removeFromGraph(Value value) {
-        Set<HeapValue> predecessors = graph.predecessors(value);
-        if (graph.predecessors(value).isEmpty() && !gcRoots.values().contains(value)
+        Set<HeapValue> predecessors = npjGraph.predecessors(value);
+
+        //There is no reference to 'value' AND none of variables points to that 'value'
+        //OR has only one predecessor - itself
+        if (npjGraph.predecessors(value).isEmpty() && !declaredVariables.values().contains(value)
                 || (predecessors.contains(value) && predecessors.size() == 1)) {
-            Set<HeapValue> successors = graph.successors(value);
-            graph.removeNode(value);
+            Set<HeapValue> successors = npjGraph.successors(value);
+            npjGraph.removeNode(value);
+            //If object which has been removed was the only one predecessor of another object - it is not reachable
             for (Value successor : successors) {
                 removeFromGraph(successor);
             }

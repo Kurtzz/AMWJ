@@ -1,8 +1,8 @@
 package pl.edu.agh.amwj.ast.statement;
 
 import pl.edu.agh.amwj.ast.expression.Expression;
+import pl.edu.agh.amwj.ast.value.*;
 import pl.edu.agh.amwj.exceptions.VariableAlreadyDefinedException;
-import pl.edu.agh.amwj.value.*;
 
 import static pl.edu.agh.amwj.Data.*;
 
@@ -25,25 +25,28 @@ public class VariableDeclarationStatement implements Statement {
     }
 
     public void execute() {
-        if (gcRoots.containsKey(name)) {
+        if (declaredVariables.containsKey(name)) {
             throw new VariableAlreadyDefinedException(name);
         }
         switch (type) {
             case T_TYPE:
                 TValue newTValue = new TValue(null, null, new IntegerValue(0));
 
-                gcRoots.put(name, newTValue); //Reference
-                myHeap.allocateTValue(newTValue);
-                graph.addNode(newTValue); //root node
+                declaredVariables.put(name, newTValue); //Reference
+                npjHeap.allocateTValue(newTValue);
+                npjGraph.addNode(newTValue); //root node
 
                 break;
             case S_TYPE:
-                SValue newSValue = new SValue(null);
-                newSValue.setContent((StringValue) value.evaluate());
+                SValue newSValue = new SValue((StringValue) value.evaluate());
+                declaredVariables.put(name, newSValue);
 
-                myHeap.allocateSValue(newSValue);
-                graph.addNode(newSValue);
-                gcRoots.put(name, newSValue);
+                if (newSValue.getContent() == null) {
+                    newSValue.setHeapIndex(npjHeap.getNullIndex());
+                } else {
+                    npjHeap.allocateSValue(newSValue);
+                    npjGraph.addNode(newSValue);
+                }
 
                 break;
         }

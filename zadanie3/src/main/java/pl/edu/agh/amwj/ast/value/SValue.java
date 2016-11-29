@@ -1,4 +1,4 @@
-package pl.edu.agh.amwj.value;
+package pl.edu.agh.amwj.ast.value;
 
 /**
  * Created by Kurtzz on 10.11.2016.
@@ -8,6 +8,7 @@ public class SValue extends HeapValue {
 
     public SValue(StringValue content) {
         this.content = content;
+        this.setSize(content == null ? 0 : content.toString().length() + 2);
     }
 
     public StringValue getContent() {
@@ -20,6 +21,7 @@ public class SValue extends HeapValue {
         }
 
         this.content = content;
+        this.setSize(content.toString().length() + 2);
     }
 
     public Value evaluate() {
@@ -29,21 +31,6 @@ public class SValue extends HeapValue {
     public int toNumber() {
         return 0;
     }
-
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (o == null || getClass() != o.getClass()) return false;
-//
-//        SValue sValue = (SValue) o;
-//
-//        return content != null ? content.equals(sValue.content) : sValue.content == null;
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return content != null ? content.hashCode() : 0;
-//    }
 
     @Override
     public String toString() {

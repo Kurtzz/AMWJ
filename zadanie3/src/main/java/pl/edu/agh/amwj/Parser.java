@@ -7,10 +7,10 @@ import pl.edu.agh.amwj.exceptions.InvalidIdentifierException;
 import pl.edu.agh.amwj.exceptions.InvalidVariableNameException;
 import pl.edu.agh.amwj.tokenizer.Token;
 import pl.edu.agh.amwj.tokenizer.TokenType;
-import pl.edu.agh.amwj.value.IntegerValue;
-import pl.edu.agh.amwj.value.NullValue;
-import pl.edu.agh.amwj.value.ObjectType;
-import pl.edu.agh.amwj.value.StringValue;
+import pl.edu.agh.amwj.ast.value.IntegerValue;
+import pl.edu.agh.amwj.ast.value.NullValue;
+import pl.edu.agh.amwj.ast.value.ObjectType;
+import pl.edu.agh.amwj.ast.value.StringValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +37,6 @@ public class Parser {
     public List<Statement> parse() throws InvalidVariableNameException, InvalidIdentifierException {
         List<Statement> statements = new ArrayList<Statement>();
 
-        //TODO: test name correctness
         while (true) {
             /* LVALUE = RVALUE */
             if (match(TokenType.WORD, TokenType.EQUALS)) {
@@ -72,9 +71,7 @@ public class Parser {
             else if (match(TokenType.T_TYPE, TokenType.WORD, TokenType.SEMICOLON)) {
                 ObjectType type = ObjectType.T_TYPE;
                 String name = last(2).getText();
-                System.out.println("Name: " + name);
                 if (!validateVariableName(name)) {
-                    System.out.println("Invalid name: " + name);
                     throw new InvalidVariableNameException(name);
                 }
                 statements.add(new VariableDeclarationStatement(type, name));
