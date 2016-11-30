@@ -131,7 +131,7 @@ public class AssignmentStatement implements Statement {
 
         //There is no reference to 'value' AND none of variables points to that 'value'
         //OR has only one predecessor - itself
-        if (npjGraph.predecessors(value).isEmpty() && !declaredVariables.values().contains(value)
+        if (npjGraph.predecessors(value).isEmpty() && !declaredVariables.containsValue(value)
                 || (predecessors.contains(value) && predecessors.size() == 1)) {
             Set<HeapValue> successors = npjGraph.successors(value);
             npjGraph.removeNode(value);

@@ -1,11 +1,11 @@
 package pl.edu.agh.amwj.collector;
 
+import com.google.common.collect.Lists;
 import pl.edu.agh.amwj.exceptions.InvalidHeapSizeException;
 import pl.edu.agh.amwj.ast.value.HeapValue;
 import pl.edu.agh.amwj.ast.value.SValue;
 import pl.edu.agh.amwj.ast.value.TValue;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static pl.edu.agh.amwj.collector.NpjHeapConstants.S_HEADER;
@@ -25,7 +25,7 @@ public class NpjHeap {
     private NpjHeap(int heapSize) {
         this.heapSize = heapSize;
         this.realSize = heapSize - 1;
-        this.heapValues = new ArrayList<HeapValue>();
+        this.heapValues = Lists.newArrayList();
         this.currentHeapIndexPosition = 0;
         this.currentHalf = -1;
     }
