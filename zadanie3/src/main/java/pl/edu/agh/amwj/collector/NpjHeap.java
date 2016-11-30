@@ -64,7 +64,7 @@ public class NpjHeap {
 
         value.setHeapIndex(currentHeapIndexPosition);
         heapValues.add(value);
-        currentHeapIndexPosition += value.toString().length() + 1;
+        currentHeapIndexPosition += value.toString().length() + 2;
     }
 
     private boolean isNotEnoughSpace(int requireSpace) {
