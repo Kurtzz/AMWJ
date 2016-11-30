@@ -23,11 +23,6 @@ public class FileReader {
                     builder.append(buffer, 0, read);
                 }
 
-                // HACK: The parser expects every statement to end in a newline,
-                // even the very last one, so we'll just tack one on here in
-                // case the file doesn't have one.
-                builder.append("\n");
-
                 return builder.toString();
             } finally {
                 stream.close();

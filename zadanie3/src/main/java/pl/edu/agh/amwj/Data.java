@@ -1,6 +1,13 @@
 package pl.edu.agh.amwj;
 
-import pl.edu.agh.amwj.value.Value;
+import com.google.common.graph.*;
+import pl.edu.agh.amwj.ast.value.HeapValue;
+import pl.edu.agh.amwj.ast.value.IntegerValue;
+import pl.edu.agh.amwj.collector.Collector;
+import pl.edu.agh.amwj.collector.MyEdge;
+import pl.edu.agh.amwj.collector.NpjCollector;
+import pl.edu.agh.amwj.exceptions.InvalidHeapSizeException;
+import pl.edu.agh.amwj.collector.NpjHeap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,8 +16,15 @@ import java.util.Map;
  * Created by Kurtzz on 2016-11-10.
  */
 public class Data {
-    public static final int[] heap = new int[128];
-    public static final Map<String, Integer> heapmap = new HashMap<String, Integer>();
-    public static final Map<String, Value> variables = new HashMap<String, Value>();
-    public static int currentStatement;
+    public static NpjHeap npjHeap;
+    public static Map<Object, Object> declaredVariables;
+    public static MutableNetwork<HeapValue, MyEdge> npjGraph;
+    public static Collector npjCollector;
+
+    public static void initializeData(int size) throws InvalidHeapSizeException {
+        declaredVariables = new HashMap<Object, Object>();
+        npjGraph = NetworkBuilder.directed().allowsParallelEdges(true).allowsSelfLoops(true).build();
+        npjHeap = NpjHeap.getInstance(size);
+        npjCollector = new NpjCollector();
+    }
 }

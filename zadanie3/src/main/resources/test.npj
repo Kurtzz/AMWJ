@@ -1,11 +1,9 @@
-VarDeclT treetop;
-VarDeclT t1;
-VarDeclT t2;
-treetop.f1 = t1;
-treetop.f2 = t2;
-treetop.data = 1;
-t1.data = 2;
-t2.data = 3;
+VarDeclT t1; t1.data = 1;
+VarDeclT t2; t2.data = 2;
+t1 = t2;
+
+VarDeclT fes7s;
+t1.data = 4441414;
 
 Print "Helloworld";
 Print "Helloworld 2";

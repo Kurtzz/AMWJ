@@ -1,0 +1,14 @@
+VarDeclS s1 "abcd";
+VarDeclS s2 "efgh";
+
+s1 = s2;
+
+VarDeclS s3 "ijkl";
+s3 = s2;
+
+VarDeclS s4 "mnop";
+
+Print "Helloworld";
+Print "Helloworld 2";
+Collect;
+HeapAnalyze;
