@@ -1,0 +1,28 @@
+<project name="zadanie1" default="default">
+    <property name="src" location="src/"/>
+    <property name="lib" location="lib/"/>
+    <property name="build" location="classes/"/>
+    <property name="ant.build.javac.source" value="1.7"/>
+    <property name="ant.build.javac.target" value="1.7"/>
+
+    <path id="classpath">
+        <fileset dir="${lib}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="default" depends="compile"/>
+
+    <target name="clean">
+        <delete file="classes/Interpreter.class"/>
+        <delete dir="classes/pl" />
+    </target>
+
+    <target name="compile" depends="clean">
+        <mkdir dir="${build}"/>
+        <javac srcdir="${src}" destdir="${build}" target="1.7">
+            <classpath refid="classpath"/>
+        </javac>
+    </target>
+
+</project>

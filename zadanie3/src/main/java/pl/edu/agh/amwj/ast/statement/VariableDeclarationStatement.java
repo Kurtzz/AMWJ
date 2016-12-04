@@ -28,11 +28,12 @@ public class VariableDeclarationStatement implements Statement {
         if (declaredVariables.containsKey(name)) {
             throw new VariableAlreadyDefinedException(name);
         }
+
         switch (type) {
             case T_TYPE:
                 TValue newTValue = new TValue(null, null, new IntegerValue(0));
 
-                declaredVariables.put(name, newTValue); //Reference
+                declaredVariables.put(name, newTValue); //reference
                 npjHeap.allocateTValue(newTValue);
                 npjGraph.addNode(newTValue); //root node
 
@@ -50,5 +51,11 @@ public class VariableDeclarationStatement implements Statement {
 
                 break;
         }
+    }
+
+    @Override
+    public String toString() {
+        return (type.equals(ObjectType.T_TYPE) ? "VarDeclT " : "VarDeclS ")
+                + name + " " + value;
     }
 }

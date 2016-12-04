@@ -6,6 +6,7 @@ import pl.edu.agh.amwj.ast.value.*;
 import pl.edu.agh.amwj.collector.MyEdge;
 import pl.edu.agh.amwj.exceptions.UndeclaredVariableException;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import static pl.edu.agh.amwj.Data.*;
@@ -53,7 +54,7 @@ public class AssignmentStatement implements Statement {
                 declaredVariables.put(splittedName[0], evaluatedValue);
             }
 
-            removeFromGraph(object);
+            updateGraph(object);
 
             return;
         }
@@ -94,7 +95,7 @@ public class AssignmentStatement implements Statement {
                     }
                 }
                 npjGraph.removeEdge(edgeToRemove);
-                removeFromGraph(oldValue);
+                updateGraph(oldValue);
             }
             if (evaluatedValue != null) {
                 npjGraph.addEdge(updatedValue, (HeapValue) evaluatedValue, new MyEdge(lastPart));
@@ -126,19 +127,31 @@ public class AssignmentStatement implements Statement {
     }
 
     //TODO: rename it
-    private void removeFromGraph(Value value) {
+    private void updateGraph(Value value) {
+        if (declaredVariables.containsValue(value)) {
+            return;
+        }
         Set<HeapValue> predecessors = npjGraph.predecessors(value);
 
-        //There is no reference to 'value' AND none of variables points to that 'value'
+        //IF There is no reference to 'value' AND none of variables fields points to that 'value'
         //OR has only one predecessor - itself
-        if (npjGraph.predecessors(value).isEmpty() && !declaredVariables.containsValue(value)
-                || (predecessors.contains(value) && predecessors.size() == 1)) {
-            Set<HeapValue> successors = npjGraph.successors(value);
+        if (predecessors.contains(value) && predecessors.size() == 1) {
+            npjGraph.removeNode(value);
+            return;
+        }
+        if (npjGraph.predecessors(value).isEmpty()) {
+            Set<HeapValue> successors = new HashSet<HeapValue>(npjGraph.successors(value));
+
             npjGraph.removeNode(value);
             //If object which has been removed was the only one predecessor of another object - it is not reachable
             for (Value successor : successors) {
-                removeFromGraph(successor);
+                updateGraph(successor);
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return name + " = " +  value;
     }
 }
